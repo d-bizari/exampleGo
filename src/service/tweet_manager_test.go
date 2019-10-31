@@ -23,3 +23,22 @@ func TestPublishedTweetIsSaved(t *testing.T){
 	assert.Equal(t,publishedTweet.Text,text,"Should be equal")
 	assert.NotEqual(t,publishedTweet.Date,nil,"Should not be equal")
 }
+
+func TestTweetWithoutUserIsNotPublished(t *testing.T) {
+
+	// Initialization
+	var tweet *domain.Tweet
+
+	var user string
+	text := "This is my first tweet"
+
+	tweet = domain.NewTweet(user, text)
+
+	// Operation
+	var err error
+	err = service.PublishTweet(tweet)
+
+	// Validation
+	assert.NotNil(t,err)
+	assert.Equal(t,err.Error(),"user is required")
+}
