@@ -8,8 +8,13 @@ type Tweet struct {
 }
 
 func NewTweet(user string,text string) *Tweet{
-	t := Tweet{user,text,nil}
+	ptrTweet := &Tweet{user,text,nil}
+	/*
+	ptrTweet := new(Tweet)
+	ptrTweet.User = user
+	ptrTweet.Text = text
+	*/
 	tn := time.Now()
-	t.Date = &tn
-	return &t
+	ptrTweet.Date = &tn
+	return ptrTweet
 }
