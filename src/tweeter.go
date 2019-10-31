@@ -25,12 +25,15 @@ func main() {
 			c.Print("Write your user: ")
 			user := c.ReadLine()
 
-			tweet := domain.NewTweet(texto,user)
+			tweet := domain.NewTweet(texto, user)
 
-			service.PublishTweet(tweet)
+			err := service.PublishTweet(tweet)
 
-			c.Print("Tweet sent\n")
-
+			if err != nil {
+				println(err.Error())
+			} else {
+				c.Print("Tweet sent\n")
+			}
 			return
 		},
 	})
@@ -44,8 +47,8 @@ func main() {
 
 			tweet := service.GetTweet()
 
-			c.Println("Tweet:",tweet.User)
-			c.Println("User:",tweet.Text)
+			c.Println("Tweet:", tweet.User)
+			c.Println("User:", tweet.Text)
 
 			return
 		},

@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestPublishedTweetIsSaved(t *testing.T){
+func TestPublishedTweetIsSaved(t *testing.T) {
 	// Initialization
 	var tweet *domain.Tweet
 	user := "grupoesfera"
@@ -19,13 +19,12 @@ func TestPublishedTweetIsSaved(t *testing.T){
 
 	// Validation
 	publishedTweet := service.GetTweet()
-	assert.Equal(t,publishedTweet.User,user,"Should be equal")
-	assert.Equal(t,publishedTweet.Text,text,"Should be equal")
-	assert.NotEqual(t,publishedTweet.Date,nil,"Should not be equal")
+	assert.Equal(t, publishedTweet.User, user, "Should be equal")
+	assert.Equal(t, publishedTweet.Text, text, "Should be equal")
+	assert.NotEqual(t, publishedTweet.Date, nil, "Should not be equal")
 }
 
 func TestTweetWithoutUserIsNotPublished(t *testing.T) {
-
 	// Initialization
 	var tweet *domain.Tweet
 
@@ -39,6 +38,42 @@ func TestTweetWithoutUserIsNotPublished(t *testing.T) {
 	err = service.PublishTweet(tweet)
 
 	// Validation
-	assert.NotNil(t,err)
-	assert.Equal(t,err.Error(),"user is required")
+	assert.NotNil(t, err)
+	assert.Equal(t, err.Error(), "user is required")
+}
+
+func TestTweetWithoutTextIsNotPublished(t *testing.T) {
+	// Initialization
+	var tweet *domain.Tweet
+
+	var user string = "nana"
+	text := ""
+
+	tweet = domain.NewTweet(user, text)
+
+	// Operation
+	var err error
+	err = service.PublishTweet(tweet)
+
+	// Validation
+	assert.NotNil(t, err)
+	assert.Equal(t, err.Error(), "text is required")
+}
+
+func TestTweetWhichExceeding140CharactersIsNotPublished(t *testing.T) {
+	// Initialization
+	var tweet *domain.Tweet
+
+	var user string = "nana"
+	text := "aaaaaaafasdfasdfsdfasfasdfadfjklsfkl;asdjkfaldsjfkalsdfj;asdflkasdlkfaslfasdfksdfaksjfldaklfasjfkasjdkflafsdfasdfasdfadfasfasdfasdfasdfasdfasfdasfasdfafasdfs"
+
+	tweet = domain.NewTweet(user, text)
+
+	// Operation
+	var err error
+	err = service.PublishTweet(tweet)
+
+	// Validation
+	assert.NotNil(t, err)
+	assert.Equal(t, err.Error(), "characters exceeded, only 140 characters are allowed")
 }
