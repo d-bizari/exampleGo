@@ -35,7 +35,7 @@ func TestTweetWithoutUserIsNotPublished(t *testing.T) {
 
 	// Operation
 	var err error
-	err = service.PublishTweet(tweet)
+	_, err = service.PublishTweet(tweet)
 
 	// Validation
 	assert.NotNil(t, err)
@@ -53,7 +53,7 @@ func TestTweetWithoutTextIsNotPublished(t *testing.T) {
 
 	// Operation
 	var err error
-	err = service.PublishTweet(tweet)
+	_, err = service.PublishTweet(tweet)
 
 	// Validation
 	assert.NotNil(t, err)
@@ -71,7 +71,7 @@ func TestTweetWhichExceeding140CharactersIsNotPublished(t *testing.T) {
 
 	// Operation
 	var err error
-	err = service.PublishTweet(tweet)
+	_, err = service.PublishTweet(tweet)
 
 	// Validation
 	assert.NotNil(t, err)
@@ -82,6 +82,7 @@ func TestCanPublishAndRetrieveMoreThanOneTweet(t *testing.T) {
 	// Initialization
 	service.InitializeService()
 	var tweet, secondTweet *domain.Tweet // Fill the tweets with data
+	var id1, id2 int64
 	user1 := "dani"
 	text1 := "hola"
 	user2 := "chise"
@@ -91,8 +92,8 @@ func TestCanPublishAndRetrieveMoreThanOneTweet(t *testing.T) {
 	secondTweet = domain.NewTweet(user2, text2)
 
 	// Operation
-	service.PublishTweet(tweet)
-	service.PublishTweet(secondTweet)
+	id1, _ = service.PublishTweet(tweet)
+	id2, _ = service.PublishTweet(secondTweet)
 
 	// Validation
 	publishedTweets := service.GetTweets()
@@ -102,11 +103,34 @@ func TestCanPublishAndRetrieveMoreThanOneTweet(t *testing.T) {
 	firstPublishedTweet := publishedTweets[0]
 	secondPublishedTweet := publishedTweets[1]
 
-	isValidTweet(t, firstPublishedTweet, user1, text1)
-	isValidTweet(t, secondPublishedTweet, user2, text2)
+	isValidTweet(t, firstPublishedTweet, id1, user1, text1)
+	isValidTweet(t, secondPublishedTweet, id2, user2, text2)
 }
 
-func isValidTweet(t *testing.T, tweet *domain.Tweet, user string, text string) {
+func isValidTweet(t *testing.T, tweet *domain.Tweet, id int64, user string, text string) {
 	assert.Equal(t, tweet.Text, text)
 	assert.Equal(t, tweet.User, user)
+	assert.Equal(t, tweet.Id, id)
+}
+
+func TestCanRetrieveTweetById(t *testing.T) {
+
+	// Initialization
+	service.InitializeService()
+
+	var tweet *domain.Tweet
+	var id int64
+
+	user := "grupoesfera"
+	text := "This is my first tweet"
+
+	tweet = domain.NewTweet(user, text)
+
+	// Operation
+	id, _ = service.PublishTweet(tweet)
+
+	// Validation
+	publishedTweet := service.GetTweetById(id)
+
+	isValidTweet(t, publishedTweet, id, user, text)
 }

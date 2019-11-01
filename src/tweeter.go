@@ -4,6 +4,7 @@ import (
 	"github.com/abiosoft/ishell"
 	"github.com/d-bizari/exampleGo/src/domain"
 	"github.com/d-bizari/exampleGo/src/service"
+	"strconv"
 )
 
 func main() {
@@ -27,11 +28,12 @@ func main() {
 
 			tweet := domain.NewTweet(texto, user)
 
-			err := service.PublishTweet(tweet)
+			id, err := service.PublishTweet(tweet)
 
 			if err != nil {
 				println(err.Error())
 			} else {
+				c.Println(id)
 				c.Print("Tweet sent\n")
 			}
 			return
@@ -68,6 +70,27 @@ func main() {
 				c.Println("User:", tweets[i].Text)
 				c.Println()
 			}
+
+			return
+		},
+	})
+
+	shell.AddCmd(&ishell.Cmd{
+		Name: "getTweetByID",
+		Help: "Shows tweet by ID",
+		Func: func(c *ishell.Context) {
+			var id int
+			defer c.ShowPrompt(true)
+
+			c.Print("Write ID: ")
+			idStr := c.ReadLine()
+
+			id, _ = strconv.Atoi(idStr)
+
+			tweet := service.GetTweetById(int64(id))
+
+			c.Println("Tweet:", tweet.User)
+			c.Println("User:", tweet.Text)
 
 			return
 		},
