@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-
+	service.InitializeService()
 	shell := ishell.New()
 	shell.SetPrompt("Tweeter >> ")
 	shell.Print("Type 'help' to know commands\n")
@@ -66,8 +66,8 @@ func main() {
 			tweets := service.GetTweets()
 
 			for i := 0; i < len(tweets); i++ {
-				c.Println("Tweet:", tweets[i].User)
-				c.Println("User:", tweets[i].Text)
+				c.Println("Tweet:", tweets[i].Text)
+				c.Println("User:", tweets[i].User)
 				c.Println()
 			}
 
@@ -108,6 +108,26 @@ func main() {
 
 			c.Println("Tweet:", tweet.User)
 			c.Println("User:", tweet.Text)
+
+			return
+		},
+	})
+
+	shell.AddCmd(&ishell.Cmd{
+		Name: "getTweetsByUser",
+		Help: "Shows tweets by user",
+		Func: func(c *ishell.Context) {
+			defer c.ShowPrompt(true)
+
+			c.Print("Write User: ")
+			user := c.ReadLine()
+
+			tweets := service.GetTweetsByUser(user)
+
+			for _ , tweet := range tweets {
+				c.Println("Tweet:", tweet.User)
+				c.Println("User:", tweet.Text)
+			}
 
 			return
 		},

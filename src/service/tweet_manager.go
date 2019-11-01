@@ -6,6 +6,7 @@ import (
 )
 
 var Tweets []*domain.Tweet
+var Users map[string][]*domain.Tweet
 var IdCounter int64
 
 func PublishTweet(tweet *domain.Tweet) (int64, error) {
@@ -21,12 +22,17 @@ func PublishTweet(tweet *domain.Tweet) (int64, error) {
 	IdCounter++
 	tweet.Id = IdCounter
 	Tweets = append(Tweets, tweet)
+	if Users[tweet.User] == nil {
+		Users[tweet.User] = make([]*domain.Tweet, 0)
+	}
+	Users[tweet.User] = append(Users[tweet.User], tweet)
 	return IdCounter, nil
 }
 
 func InitializeService() {
 	Tweets = make([]*domain.Tweet, 0)
 	IdCounter = 0
+	Users = make(map[string][]*domain.Tweet)
 }
 
 func GetTweets() []*domain.Tweet {
@@ -55,4 +61,8 @@ func CountTweetsByUser(user string) int {
 		}
 	}
 	return count
+}
+
+func GetTweetsByUser(user string) []*domain.Tweet {
+	return Users[user]
 }

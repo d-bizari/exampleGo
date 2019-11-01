@@ -9,6 +9,7 @@ import (
 
 func TestPublishedTweetIsSaved(t *testing.T) {
 	// Initialization
+	service.InitializeService()
 	var tweet *domain.Tweet
 	user := "grupoesfera"
 	text := "This is my first tweet"
@@ -153,4 +154,33 @@ func TestCanCountTheTweetsSentByAnUser(t *testing.T) {
 	count := service.CountTweetsByUser(user)
 	// Validation
 	assert.Equal(t, count, 2, "Expected count is 2 but was %d", count)
+}
+
+func TestCanRetrieveTheTweetsSentByAnUser(t *testing.T) {
+	// Initialization
+	service.InitializeService()
+	var tweet, secondTweet, thirdTweet *domain.Tweet
+	var id1, id2 int64
+
+	user := "grupoesfera"
+	anotherUser := "nick"
+	text := "This is my first tweet"
+	secondText := "This is my second tweet"
+	tweet = domain.NewTweet(user, text)
+	secondTweet = domain.NewTweet(user, secondText)
+	thirdTweet = domain.NewTweet(anotherUser, text)
+	// publish the 3 tweets
+	id1, _ = service.PublishTweet(tweet)
+	id2, _ = service.PublishTweet(secondTweet)
+	service.PublishTweet(thirdTweet)
+	// Operation
+	tweets := service.GetTweetsByUser(user)
+
+	// Validation
+	assert.Equal(t,len(tweets),2)
+	firstPublishedTweet := tweets[0]
+	secondPublishedTweet := tweets[1]
+	// check if isValidTweet for firstPublishedTweet and secondPublishedTweet
+	isValidTweet(t, firstPublishedTweet, id1, user, text)
+	isValidTweet(t,secondPublishedTweet,id2,user,secondText)
 }
