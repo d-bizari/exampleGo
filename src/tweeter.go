@@ -54,6 +54,25 @@ func main() {
 		},
 	})
 
+	shell.AddCmd(&ishell.Cmd{
+		Name: "showTweets",
+		Help: "Shows all the tweets",
+		Func: func(c *ishell.Context) {
+
+			defer c.ShowPrompt(true)
+
+			tweets := service.GetTweets()
+
+			for i := 0; i < len(tweets); i++ {
+				c.Println("Tweet:", tweets[i].User)
+				c.Println("User:", tweets[i].Text)
+				c.Println()
+			}
+
+			return
+		},
+	})
+
 	shell.Run()
 
 }

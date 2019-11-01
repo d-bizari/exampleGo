@@ -28,3 +28,7 @@ func InitializeService() {
 func GetTweets() []*domain.Tweet {
 	return Tweets
 }
+
+func GetTweet() *domain.Tweet {
+	return Tweets[len(Tweets)-1]
+}

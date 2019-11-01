@@ -18,10 +18,10 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 	service.PublishTweet(tweet)
 
 	// Validation
-	publishedTweet := service.GetTweets()
-	assert.Equal(t, publishedTweet[0].User, user, "Should be equal")
-	assert.Equal(t, publishedTweet[0].Text, text, "Should be equal")
-	assert.NotEqual(t, publishedTweet[0].Date, nil, "Should not be equal")
+	publishedTweet := service.GetTweet()
+	assert.Equal(t, publishedTweet.User, user, "Should be equal")
+	assert.Equal(t, publishedTweet.Text, text, "Should be equal")
+	assert.NotEqual(t, publishedTweet.Date, nil, "Should not be equal")
 }
 
 func TestTweetWithoutUserIsNotPublished(t *testing.T) {
