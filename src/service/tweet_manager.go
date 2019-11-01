@@ -5,7 +5,7 @@ import (
 	"github.com/d-bizari/exampleGo/src/domain"
 )
 
-var Tweet *domain.Tweet
+var Tweets []*domain.Tweet
 
 func PublishTweet(tweet *domain.Tweet) error {
 	if tweet.User == "" {
@@ -17,10 +17,14 @@ func PublishTweet(tweet *domain.Tweet) error {
 	if len(tweet.Text) > 140 {
 		return fmt.Errorf("characters exceeded, only 140 characters are allowed")
 	}
-	Tweet = tweet
+	Tweets = append(Tweets, tweet)
 	return nil
 }
 
-func GetTweet() *domain.Tweet {
-	return Tweet
+func InitializeService() {
+	Tweets = make([]*domain.Tweet, 0)
+}
+
+func GetTweets() []*domain.Tweet {
+	return Tweets
 }

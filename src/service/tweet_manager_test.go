@@ -18,10 +18,10 @@ func TestPublishedTweetIsSaved(t *testing.T) {
 	service.PublishTweet(tweet)
 
 	// Validation
-	publishedTweet := service.GetTweet()
-	assert.Equal(t, publishedTweet.User, user, "Should be equal")
-	assert.Equal(t, publishedTweet.Text, text, "Should be equal")
-	assert.NotEqual(t, publishedTweet.Date, nil, "Should not be equal")
+	publishedTweet := service.GetTweets()
+	assert.Equal(t, publishedTweet[0].User, user, "Should be equal")
+	assert.Equal(t, publishedTweet[0].Text, text, "Should be equal")
+	assert.NotEqual(t, publishedTweet[0].Date, nil, "Should not be equal")
 }
 
 func TestTweetWithoutUserIsNotPublished(t *testing.T) {
@@ -76,4 +76,37 @@ func TestTweetWhichExceeding140CharactersIsNotPublished(t *testing.T) {
 	// Validation
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), "characters exceeded, only 140 characters are allowed")
+}
+
+func TestCanPublishAndRetrieveMoreThanOneTweet(t *testing.T) {
+	// Initialization
+	service.InitializeService()
+	var tweet, secondTweet *domain.Tweet // Fill the tweets with data
+	user1 := "dani"
+	text1 := "hola"
+	user2 := "chise"
+	text2 := "wolas"
+
+	tweet = domain.NewTweet(user1, text1)
+	secondTweet = domain.NewTweet(user2, text2)
+
+	// Operation
+	service.PublishTweet(tweet)
+	service.PublishTweet(secondTweet)
+
+	// Validation
+	publishedTweets := service.GetTweets()
+
+	assert.Equal(t, len(publishedTweets), 2, "Expected size is 2 but was %d", len(publishedTweets))
+
+	firstPublishedTweet := publishedTweets[0]
+	secondPublishedTweet := publishedTweets[1]
+
+	isValidTweet(t, firstPublishedTweet, user1, text1)
+	isValidTweet(t, secondPublishedTweet, user2, text2)
+}
+
+func isValidTweet(t *testing.T, tweet *domain.Tweet, user string, text string) {
+	assert.Equal(t, tweet.Text, text)
+	assert.Equal(t, tweet.User, user)
 }
