@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"fmt"
 	"github.com/d-bizari/exampleGo/src/domain"
 	"github.com/d-bizari/exampleGo/src/service"
 	"github.com/stretchr/testify/assert"
@@ -160,7 +161,7 @@ func TestCanRetrieveTheTweetsSentByAnUser(t *testing.T) {
 	// Initialization
 	tm := service.NewTweetManager()
 	var tweet, secondTweet, thirdTweet *domain.TextTweet
-	var id1, id2 int64
+	var id1, id2, id3 int64
 
 	user := "grupoesfera"
 	anotherUser := "nick"
@@ -168,21 +169,28 @@ func TestCanRetrieveTheTweetsSentByAnUser(t *testing.T) {
 	secondText := "This is my second tweet"
 	tweet = domain.NewTextTweet(user, text)
 	secondTweet = domain.NewTextTweet(user, secondText)
+	fourthTweet := domain.NewTextTweet(user, "holaaa")
 	thirdTweet = domain.NewTextTweet(anotherUser, text)
 	// publish the 3 tweets
 	id1, _ = tm.PublishTweet(tweet)
 	id2, _ = tm.PublishTweet(secondTweet)
+	id3, _ = tm.PublishTweet(fourthTweet)
 	tm.PublishTweet(thirdTweet)
 	// Operation
 	tweets := tm.GetTweetsByUser(user)
 
+	for _, tw := range tweets {
+		fmt.Println(tw)
+	}
+
 	// Validation
-	assert.Equal(t, len(tweets), 2)
+	assert.Equal(t, len(tweets), 3)
 	firstPublishedTweet := tweets[0]
 	secondPublishedTweet := tweets[1]
 	// check if isValidTweet for firstPublishedTweet and secondPublishedTweet
 	isValidTweet(t, firstPublishedTweet, id1, user, text)
 	isValidTweet(t, secondPublishedTweet, id2, user, secondText)
+	isValidTweet(t, fourthTweet, id3, user, "holaaa")
 }
 
 func TestCanGetAStringFromATweet(t *testing.T) {

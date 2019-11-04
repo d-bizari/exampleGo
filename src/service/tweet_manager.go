@@ -33,6 +33,7 @@ func (tm *TweetManager) PublishTweet(tweet domain.Tweet) (int64, error) {
 	tm.IdCounter++
 	tweet.SetId(tm.IdCounter)
 	tm.Tweets = append(tm.Tweets, tweet)
+
 	if tm.Users[tweet.GetUser()] == nil {
 		tm.Users[tweet.GetUser()] = make([]domain.Tweet, 0)
 	}

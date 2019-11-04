@@ -8,7 +8,8 @@ import (
 )
 
 func main() {
-	service.InitializeService()
+	tm := service.NewTweetManager()
+
 	shell := ishell.New()
 	shell.SetPrompt("Tweeter >> ")
 	shell.Print("Type 'help' to know commands\n")
@@ -26,9 +27,9 @@ func main() {
 			c.Print("Write your user: ")
 			user := c.ReadLine()
 
-			tweet := domain.NewTweet(texto, user)
+			tweet := domain.NewTextTweet(user, texto)
 
-			id, err := service.PublishTweet(tweet)
+			id, err := tm.PublishTweet(tweet)
 
 			if err != nil {
 				println(err.Error())
@@ -47,10 +48,10 @@ func main() {
 
 			defer c.ShowPrompt(true)
 
-			tweet := service.GetTweet()
+			tweet := tm.GetTweet()
 
-			c.Println("Tweet:", tweet.User)
-			c.Println("User:", tweet.Text)
+			c.Println("Tweet:", tweet.GetUser())
+			c.Println("User:", tweet.GetText())
 
 			return
 		},
@@ -63,11 +64,11 @@ func main() {
 
 			defer c.ShowPrompt(true)
 
-			tweets := service.GetTweets()
+			tweets := tm.GetTweets()
 
 			for i := 0; i < len(tweets); i++ {
-				c.Println("Tweet:", tweets[i].Text)
-				c.Println("User:", tweets[i].User)
+				c.Println("Tweet:", tweets[i].GetText())
+				c.Println("User:", tweets[i].GetUser())
 				c.Println()
 			}
 
@@ -85,7 +86,7 @@ func main() {
 			c.Print("Write user: ")
 			user := c.ReadLine()
 
-			count := service.CountTweetsByUser(user)
+			count := tm.CountTweetsByUser(user)
 			c.Println(count)
 
 			return
@@ -104,10 +105,10 @@ func main() {
 
 			id, _ = strconv.Atoi(idStr)
 
-			tweet := service.GetTweetById(int64(id))
+			tweet := tm.GetTweetById(int64(id))
 
-			c.Println("Tweet:", tweet.User)
-			c.Println("User:", tweet.Text)
+			c.Println("Tweet:", tweet.GetUser())
+			c.Println("User:", tweet.GetText())
 
 			return
 		},
@@ -122,11 +123,11 @@ func main() {
 			c.Print("Write User: ")
 			user := c.ReadLine()
 
-			tweets := service.GetTweetsByUser(user)
+			tweets := tm.GetTweetsByUser(user)
 
-			for _ , tweet := range tweets {
-				c.Println("Tweet:", tweet.User)
-				c.Println("User:", tweet.Text)
+			for _, tweet := range tweets {
+				c.Println("Tweet:", tweet.GetUser())
+				c.Println("User:", tweet.GetText())
 			}
 
 			return
