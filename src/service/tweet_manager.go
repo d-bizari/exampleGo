@@ -3,12 +3,14 @@ package service
 import (
 	"fmt"
 	"github.com/d-bizari/exampleGo/src/domain"
+	"os"
 )
 
 type TweetManager struct {
 	Tweets    []domain.Tweet
 	Users     map[string][]domain.Tweet
 	IdCounter int64
+	Writer    TweetWriter
 }
 
 func NewTweetManager() *TweetManager {
@@ -16,6 +18,13 @@ func NewTweetManager() *TweetManager {
 	tm.Tweets = make([]domain.Tweet, 0)
 	tm.Users = make(map[string][]domain.Tweet)
 	tm.IdCounter = 0
+	tm.Writer = new(FileTweeterWriter)
+	file, _ := os.OpenFile(
+		"tweets.txt",
+		os.O_WRONLY|os.O_TRUNC|os.O_CREATE,
+		0666,
+	)
+	tm.Writer.SetFile(file)
 	return tm
 }
 
@@ -38,6 +47,7 @@ func (tm *TweetManager) PublishTweet(tweet domain.Tweet) (int64, error) {
 		tm.Users[tweet.GetUser()] = make([]domain.Tweet, 0)
 	}
 	tm.Users[tweet.GetUser()] = append(tm.Users[tweet.GetUser()], tweet)
+	go tm.Writer.write(tweet)
 	return tm.IdCounter, nil
 }
 
